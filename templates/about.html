@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Our Atelier Story & Sustainability | AURA ATELIER{% endblock %}
+
+{% block content %}
+
+<!-- Hero Banner -->
+<section class="py-5 bg-light border-bottom text-center">
+    <div class="container py-4">
+        <span class="hero-tagline">Mindful Luxury & Sustainable Heritage</span>
+        <h1 class="font-serif fw-bold display-4 mt-2 mb-3">Crafted to Endure. Designed to Move.</h1>
+        <p class="text-muted fs-6 mx-auto" style="max-width: 650px;">
+            AURA Atelier was born from a refusal to compromise between modern high-fashion aesthetics and ecological stewardship.
+        </p>
+    </div>
+</section>
+
+<!-- Story Section -->
+<section class="py-5">
+    <div class="container py-3">
+        <div class="row align-items-center g-5 mb-5">
+            <div class="col-lg-6">
+                <span class="product-category-text">Our Philosophy</span>
+                <h2 class="editorial-heading fw-bold fs-2 mb-3">Slow Fashion in an Accelerated World</h2>
+                <p class="text-muted mb-3">
+                    Fast fashion discards billions of garments every year. At AURA Atelier, our capsule approach reimagines modern dressing: versatile, timeless, tactile silhouettes cut in small batches by master artisans.
+                </p>
+                <p class="text-muted mb-4">
+                    Every seam is bound with French tailoring methods. Every button is carved from fallen horn or natural mother-of-pearl shells. We believe true luxury is tactile comfort, uncompromising durability, and pure peace of mind.
+                </p>
+                <div class="p-3 bg-light rounded-3 border-start border-4 border-dark">
+                    <p class="fst-italic small text-dark mb-1">
+                        "When you touch pure European linen or whisper-soft cashmere, you are connecting to millennia of human craft, not petrochemical plastic."
+                    </p>
+                    <span class="small fw-bold">— Aurélie Laurent, Founder & Creative Director</span>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="rounded-4 overflow-hidden shadow-lg border border-white border-4">
+                    <img src="{{ url_for('static', filename='images/pexels-cristian-rojas-8030173.jpg') }}" alt="Artisan linen rack" class="img-fluid w-100 object-fit-cover" style="max-height: 480px;">
+                </div>
+            </div>
+        </div>
+
+        <!-- 3 Pillars Grid -->
+        <div class="row g-4 mt-4">
+            <div class="col-md-4">
+                <div class="p-4 bg-white rounded-4 border h-100 shadow-sm text-center">
+                    <div class="trust-icon-box mx-auto mb-3">
+                        <i class="bi bi-flower3"></i>
+                    </div>
+                    <h5 class="font-serif fw-bold mb-2">100% GOTS & Flax Linen</h5>
+                    <p class="small text-muted mb-0">
+                        Flax requires zero irrigation beyond natural rainwater, absorbing 3.7 tons of CO2 per hectare without toxic pesticides.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-4 bg-white rounded-4 border h-100 shadow-sm text-center">
+                    <div class="trust-icon-box mx-auto mb-3">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <h5 class="font-serif fw-bold mb-2">Artisan Living Wage</h5>
+                    <p class="small text-muted mb-0">
+                        Our partner workshops in Portugal and northern Italy provide full healthcare, safe daylight ateliers, and fair living wages.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-4 bg-white rounded-4 border h-100 shadow-sm text-center">
+                    <div class="trust-icon-box mx-auto mb-3">
+                        <i class="bi bi-box2-heart"></i>
+                    </div>
+                    <h5 class="font-serif fw-bold mb-2">Zero Plastic Circularity</h5>
+                    <p class="small text-muted mb-0">
+                        From FSC-certified recycled boxes to plant-based compostable mailers, your package leaves no lasting trace on the planet.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Studio Glimpse -->
+<section class="py-5 bg-white border-top">
+    <div class="container text-center">
+        <span class="product-category-text">Inside The Workshop</span>
+        <h2 class="editorial-heading fw-bold fs-2 mt-1 mb-4">Behind Every Stitched Hem</h2>
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="rounded-4 overflow-hidden shadow-sm">
+                    <img src="{{ url_for('static', filename='images/pexels-ron-lach-8386642.jpg') }}" alt="Knitwear detail" class="img-fluid w-100" style="height:320px; object-fit:cover;">
+                </div>
+                <h6 class="font-serif fw-bold mt-3 mb-1">Textile Calibration</h6>
+                <p class="small text-muted">Gauge tension testing for long-term shape retention.</p>
+            </div>
+            <div class="col-md-6 col-lg-5">
+                <div class="rounded-4 overflow-hidden shadow-sm">
+                    <img src="{{ url_for('static', filename='images/pexels-ron-lach-8386652.jpg') }}" alt="Floral wrap dress" class="img-fluid w-100" style="height:320px; object-fit:cover;">
+                </div>
+                <h6 class="font-serif fw-bold mt-3 mb-1">Drape & Fit Modeling</h6>
+                <p class="small text-muted">Iterated on diverse silhouettes to flatter natural feminine curves.</p>
+            </div>
+        </div>
+        <div class="mt-5">
+            <a href="{{ url_for('shop') }}" class="btn btn-luxury-primary px-4 py-3">
+                Discover The Collections <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

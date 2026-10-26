@@ -1,0 +1,415 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} | AURA ATELIER{% endblock %}
+
+{% block content %}
+
+<!-- Breadcrumb -->
+<div class="py-3 bg-light border-bottom">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 small">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-muted text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('shop') }}" class="text-muted text-decoration-none">Shop</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('shop', category=product.category|lower) }}" class="text-muted text-decoration-none">{{ product.category }}</a></li>
+                <li class="breadcrumb-item active text-dark fw-bold" aria-current="page">{{ product.name }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row g-5">
+        <!-- Product Image Showcase -->
+        <div class="col-lg-7">
+            <div class="product-detail-gallery position-relative">
+                <img id="mainProductImage" src="{{ url_for('static', filename='images/' ~ product.image) }}" alt="{{ product.name }}" class="img-fluid w-100">
+                {% if product.badge %}
+                    <span class="card-badge {% if product.badge == 'Bestseller' %}badge-bestseller{% elif product.badge == 'Trending' %}badge-trending{% elif product.badge == 'Limited Edition' %}badge-limited{% else %}badge-sale{% endif %}" style="top:20px; left:20px; font-size:0.85rem; padding:6px 16px;">
+                        {{ product.badge }}
+                    </span>
+                {% endif %}
+            </div>
+
+            <!-- Artisan Guarantee Trust Banner -->
+            <div class="row g-3 mt-3">
+                <div class="col-md-4">
+                    <div class="p-3 bg-white rounded-3 border text-center">
+                        <i class="bi bi-shield-check text-gold fs-4"></i>
+                        <div class="fw-bold small mt-1">100% Authentic</div>
+                        <div class="text-muted" style="font-size:0.75rem;">Verified Atelier Origin</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-3 bg-white rounded-3 border text-center">
+                        <i class="bi bi-truck text-gold fs-4"></i>
+                        <div class="fw-bold small mt-1">Express Delivery</div>
+                        <div class="text-muted" style="font-size:0.75rem;">Dispatched in 24 Hours</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-3 bg-white rounded-3 border text-center">
+                        <i class="bi bi-recycle text-gold fs-4"></i>
+                        <div class="fw-bold small mt-1">Eco-Conscious</div>
+                        <div class="text-muted" style="font-size:0.75rem;">Zero Plastic Packaging</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Actions & Specs -->
+        <div class="col-lg-5">
+            <div class="ps-lg-3">
+                <span class="product-category-text">{{ product.category }}</span>
+                <h1 class="font-serif fw-bold fs-2 mt-1 mb-2">{{ product.name }}</h1>
+                <p class="text-muted small fst-italic mb-3">{{ product.tagline }}</p>
+
+                <!-- Reviews Rating Row -->
+                <div class="d-flex align-items-center gap-2 mb-3 pb-3 border-bottom">
+                    <div class="star-rating">
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                    </div>
+                    <span class="fw-bold small text-dark">{{ product.rating }} / 5.0</span>
+                    <span class="text-muted small">({{ reviews|length }} client reviews)</span>
+                    <span class="badge bg-success-subtle text-success border border-success-subtle ms-auto small">
+                        <i class="bi bi-check-circle me-1"></i> In Stock ({{ product.stock }} units)
+                    </span>
+                </div>
+
+                <!-- Price Row -->
+                <div class="d-flex align-items-baseline gap-3 mb-4">
+                    <span class="fs-2 fw-bold text-dark price-val" data-base-price="{{ product.price }}">${{ "%.2f"|format(product.price) }}</span>
+                    {% if product.on_sale %}
+                        <span class="fs-5 text-muted text-decoration-line-through price-val" data-base-price="{{ product.original_price }}">${{ "%.2f"|format(product.original_price) }}</span>
+                        <span class="badge bg-danger text-white rounded-pill px-3 py-2">Save {{ product.discount_percent }}%</span>
+                    {% endif %}
+                </div>
+
+                <p class="text-muted mb-4">{{ product.short_desc }}</p>
+
+                <!-- Color Selection -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <label class="form-label small fw-bold text-uppercase mb-0">Select Color: <span id="selectedColorLabel" class="text-dark fw-bold">{{ product.colors[0].name }}</span></label>
+                    </div>
+                    <div class="d-flex gap-2 align-items-center" id="colorPickerContainer">
+                        {% for col in product.colors %}
+                            <button type="button" class="color-swatch-btn {% if loop.first %}active{% endif %}" 
+                                    style="background-color: {{ col.hex }};" 
+                                    data-color="{{ col.name }}" 
+                                    title="{{ col.name }}" 
+                                    onclick="selectDetailColor(this, '{{ col.name }}')">
+                            </button>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Size Selection -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <label class="form-label small fw-bold text-uppercase mb-0">Select Size: <span id="selectedSizeLabel" class="text-dark fw-bold">{{ product.sizes[0] }}</span></label>
+                        <a href="#sizeModal" data-bs-toggle="modal" class="small text-muted text-decoration-underline"><i class="bi bi-rulers me-1"></i> Size Guide</a>
+                    </div>
+                    <div class="d-flex gap-2" id="sizePickerContainer">
+                        {% for s in product.sizes %}
+                            <button type="button" class="size-pill-btn {% if loop.first %}active{% endif %}" 
+                                    data-size="{{ s }}" 
+                                    onclick="selectDetailSize(this, '{{ s }}')">{{ s }}</button>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Quantity & Add to Cart -->
+                <div class="d-flex gap-3 align-items-center mb-4">
+                    <div class="quantity-stepper">
+                        <button class="quantity-btn" onclick="const q=document.getElementById('detailQuantity'); q.value=Math.max(1, parseInt(q.value)-1);">-</button>
+                        <input type="text" id="detailQuantity" class="quantity-input" value="1" readonly>
+                        <button class="quantity-btn" onclick="const q=document.getElementById('detailQuantity'); q.value=parseInt(q.value)+1;">+</button>
+                    </div>
+
+                    <button type="button" class="btn btn-luxury-primary flex-grow-1" id="detailAddToCartBtn" onclick="handleDetailAddToCart()">
+                        <i class="bi bi-bag-plus me-2"></i> Add To Shopping Bag
+                    </button>
+
+                    <button type="button" class="action-round-btn btn-wishlist-toggle" data-product-id="{{ product.id }}" onclick="toggleWishlist({{ product.id }}, this)" title="Add to Wishlist">
+                        <i class="bi bi-heart"></i>
+                    </button>
+                </div>
+
+                <!-- Scarcity / Stock Alert -->
+                {% if product.stock <= 5 %}
+                    <div class="alert alert-warning py-2 px-3 small d-flex align-items-center gap-2 rounded-3 mb-4">
+                        <i class="bi bi-hourglass-split fs-5"></i>
+                        <span><strong>Low Stock:</strong> Only {{ product.stock }} pieces remaining in this production run.</span>
+                    </div>
+                {% endif %}
+
+                <!-- Accordion Information Tabs -->
+                <div class="accordion accordion-flush border rounded-3 overflow-hidden" id="productSpecsAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="flush-headingOne">
+                            <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="true" aria-controls="flush-collapseOne">
+                                <i class="bi bi-card-text me-2 text-gold"></i> Silhouette & Editorial Notes
+                            </button>
+                        </h2>
+                        <div id="flush-collapseOne" class="accordion-collapse collapse show" aria-labelledby="flush-headingOne" data-bs-parent="#productSpecsAccordion">
+                            <div class="accordion-body small text-muted">
+                                {{ product.description }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="flush-headingTwo">
+                            <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                                <i class="bi bi-feather me-2 text-gold"></i> Fabric Composition & Sustainability
+                            </button>
+                        </h2>
+                        <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#productSpecsAccordion">
+                            <div class="accordion-body small text-muted">
+                                <strong>Composition:</strong> {{ product.fabric }}<br>
+                                <strong>Origin:</strong> Milled in Normandy, stitched in small family workshops under fair labor guidelines.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="flush-headingThree">
+                            <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
+                                <i class="bi bi-droplet me-2 text-gold"></i> Garment Care Instructions
+                            </button>
+                        </h2>
+                        <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#productSpecsAccordion">
+                            <div class="accordion-body small text-muted">
+                                {{ product.care }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Client Reviews Section -->
+    <div class="mt-5 pt-5 border-top">
+        <div class="row g-5">
+            <div class="col-lg-4">
+                <div class="p-4 bg-light rounded-4 border">
+                    <h4 class="font-serif fw-bold mb-3">Client Feedback</h4>
+                    <div class="d-flex align-items-baseline gap-2 mb-2">
+                        <span class="display-5 fw-bold text-dark font-serif">{{ product.rating }}</span>
+                        <span class="text-muted">out of 5.0</span>
+                    </div>
+                    <div class="star-rating fs-5 mb-3">
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                    </div>
+                    <p class="small text-muted mb-4">Based on {{ reviews|length }} verified reviews across the globe.</p>
+
+                    <!-- Add Review Form -->
+                    <h6 class="fw-bold text-uppercase small mb-2">Share Your Atelier Experience</h6>
+                    <form id="addReviewForm">
+                        <input type="hidden" id="reviewProductId" value="{{ product.id }}">
+                        <div class="mb-2">
+                            <input type="text" id="reviewAuthor" class="form-control form-control-sm" placeholder="Your Name or Initial" required>
+                        </div>
+                        <div class="mb-2">
+                            <select id="reviewRating" class="form-select form-select-sm">
+                                <option value="5">★★★★★ (5/5 Exceptional)</option>
+                                <option value="4.8">★★★★☆ (4.8/5 Beautiful)</option>
+                                <option value="4">★★★★☆ (4/5 Great)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <textarea id="reviewComment" class="form-control form-control-sm" rows="3" placeholder="Tell us how the garment fits and feels..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-luxury-primary w-100">Post Review</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <h4 class="font-serif fw-bold mb-4">Verified Client Reviews</h4>
+                <div id="reviewsContainer" class="d-flex flex-column gap-3">
+                    {% for r in reviews %}
+                        <div class="p-3 bg-white rounded-3 border">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="fw-bold text-dark small">{{ r.author }}</span>
+                                    <span class="badge bg-light text-success border border-success-subtle" style="font-size:0.65rem;">
+                                        <i class="bi bi-patch-check-fill me-1"></i> Verified Buyer
+                                    </span>
+                                </div>
+                                <span class="text-muted" style="font-size:0.75rem;">{{ r.date }}</span>
+                            </div>
+                            <div class="star-rating small mb-2">
+                                {% for i in range(r.rating|int) %}
+                                    <i class="bi bi-star-fill"></i>
+                                {% endfor %}
+                            </div>
+                            <p class="small text-muted mb-0">{{ r.comment }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Products -->
+    {% if related_products %}
+        <div class="mt-5 pt-5 border-top">
+            <div class="d-flex justify-content-between align-items-end mb-4">
+                <div>
+                    <span class="product-category-text">Complementary Aesthetics</span>
+                    <h3 class="font-serif fw-bold fs-2 mb-0">You May Also Cherish</h3>
+                </div>
+                <a href="{{ url_for('shop') }}" class="btn btn-sm btn-luxury-outline">Shop All</a>
+            </div>
+
+            <div class="row g-4">
+                {% for rp in related_products %}
+                    <div class="col-6 col-md-4">
+                        <div class="product-card">
+                            <div class="product-image-wrapper">
+                                <a href="{{ url_for('product_detail', product_id=rp.id) }}">
+                                    <img src="{{ url_for('static', filename='images/' ~ rp.image) }}" alt="{{ rp.name }}">
+                                </a>
+                                <div class="card-floating-actions">
+                                    <button type="button" class="action-round-btn btn-wishlist-toggle" data-product-id="{{ rp.id }}" onclick="toggleWishlist({{ rp.id }}, this)" title="Save to Wishlist">
+                                        <i class="bi bi-heart"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="product-content">
+                                <span class="product-category-text">{{ rp.category }}</span>
+                                <h4 class="product-title">
+                                    <a href="{{ url_for('product_detail', product_id=rp.id) }}">{{ rp.name }}</a>
+                                </h4>
+                                <div class="product-price-row">
+                                    <span class="price-current price-val" data-base-price="{{ rp.price }}">${{ "%.2f"|format(rp.price) }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Size Guide Modal -->
+<div class="modal fade" id="sizeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 p-3 shadow-lg">
+            <div class="modal-header border-0">
+                <h5 class="modal-title font-serif fw-bold">Atelier Standard Sizing Chart</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="small text-muted">All dimensions in inches. Our silhouettes are tailored for an effortless, relaxed drape.</p>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-sm small text-center align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Size</th>
+                                <th>Bust (in)</th>
+                                <th>Waist (in)</th>
+                                <th>Hips (in)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>XS</strong> (US 0-2)</td><td>32 - 33</td><td>24 - 25</td><td>34 - 35</td></tr>
+                            <tr><td><strong>S</strong> (US 4-6)</td><td>34 - 35</td><td>26 - 27</td><td>36 - 37</td></tr>
+                            <tr><td><strong>M</strong> (US 8-10)</td><td>36 - 37</td><td>28 - 29</td><td>38 - 39</td></tr>
+                            <tr><td><strong>L</strong> (US 12-14)</td><td>38 - 40</td><td>30 - 32</td><td>40 - 42</td></tr>
+                            <tr><td><strong>XL</strong> (US 16)</td><td>41 - 43</td><td>33 - 35</td><td>43 - 45</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts_extra %}
+<script>
+let currentSelectedSize = '{{ product.sizes[0] }}';
+let currentSelectedColor = '{{ product.colors[0].name }}';
+
+function selectDetailSize(btn, size) {
+    document.querySelectorAll('#sizePickerContainer .size-pill-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentSelectedSize = size;
+    document.getElementById('selectedSizeLabel').textContent = size;
+}
+
+function selectDetailColor(btn, color) {
+    document.querySelectorAll('#colorPickerContainer .color-swatch-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentSelectedColor = color;
+    document.getElementById('selectedColorLabel').textContent = color;
+}
+
+function handleDetailAddToCart() {
+    const qty = parseInt(document.getElementById('detailQuantity').value || 1, 10);
+    addToCart({{ product.id }}, qty, currentSelectedSize, currentSelectedColor);
+}
+
+// Live Review Handler
+document.getElementById('addReviewForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const author = document.getElementById('reviewAuthor').value;
+    const rating = document.getElementById('reviewRating').value;
+    const comment = document.getElementById('reviewComment').value;
+
+    try {
+        const res = await fetch('/api/reviews/add', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                product_id: {{ product.id }},
+                author: author,
+                rating: rating,
+                comment: comment
+            })
+        });
+        const data = await res.json();
+        if (data.success) {
+            showLuxuryToast("Review Published", "Thank you for sharing your experience!", "bi-star-fill");
+            const container = document.getElementById('reviewsContainer');
+            const newCard = document.createElement('div');
+            newCard.className = 'p-3 bg-white rounded-3 border';
+            newCard.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="fw-bold text-dark small">${data.review.author}</span>
+                        <span class="badge bg-light text-success border border-success-subtle" style="font-size:0.65rem;">
+                            <i class="bi bi-patch-check-fill me-1"></i> Verified Buyer
+                        </span>
+                    </div>
+                    <span class="text-muted" style="font-size:0.75rem;">Just now</span>
+                </div>
+                <div class="star-rating small mb-2">
+                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                </div>
+                <p class="small text-muted mb-0">${data.review.comment}</p>
+            `;
+            container.prepend(newCard);
+            document.getElementById('reviewComment').value = '';
+        }
+    } catch(err) {
+        console.error(err);
+    }
+});
+</script>
+{% endblock %}

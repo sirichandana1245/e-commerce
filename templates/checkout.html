@@ -1,0 +1,290 @@
+{% extends "base.html" %}
+
+{% block title %}Secure Atelier Checkout | AURA ATELIER{% endblock %}
+
+{% block content %}
+
+<div class="py-4 bg-light border-bottom">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1 small">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-muted text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('cart_page') }}" class="text-muted text-decoration-none">Bag</a></li>
+                <li class="breadcrumb-item active text-dark fw-bold" aria-current="page">Checkout</li>
+            </ol>
+        </nav>
+        <h1 class="font-serif fw-bold fs-2 mb-0">Secure Checkout</h1>
+    </div>
+</div>
+
+<div class="container py-5">
+    <form action="{{ url_for('checkout_page') }}" method="POST" id="checkoutForm" onsubmit="return validateCheckout();">
+        <div class="row g-5">
+            <!-- Left: Checkout Details -->
+            <div class="col-lg-7">
+                
+                <!-- Section 1: Contact -->
+                <div class="card border-0 rounded-4 shadow-sm p-4 mb-4 bg-white">
+                    <h5 class="font-serif fw-bold mb-3 d-flex align-items-center gap-2">
+                        <span class="rounded-circle bg-dark text-white d-inline-flex align-items-center justify-content-center" style="width:28px; height:28px; font-size:0.85rem;">1</span>
+                        Contact Information
+                    </h5>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-uppercase">Email Address for Confirmation</label>
+                            <input type="email" name="email" class="form-control" placeholder="client@auraatelier.com" required value="elena.r@lifestyle.com">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-uppercase">Mobile Phone (For Dispatch Alerts)</label>
+                            <input type="tel" name="phone" class="form-control" placeholder="+1 (555) 019-2834" required value="+1 (555) 748-2940">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Delivery Address -->
+                <div class="card border-0 rounded-4 shadow-sm p-4 mb-4 bg-white">
+                    <h5 class="font-serif fw-bold mb-3 d-flex align-items-center gap-2">
+                        <span class="rounded-circle bg-dark text-white d-inline-flex align-items-center justify-content-center" style="width:28px; height:28px; font-size:0.85rem;">2</span>
+                        Shipping Destination
+                    </h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-uppercase">First Name</label>
+                            <input type="text" name="firstName" class="form-control" required value="Elena">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-uppercase">Last Name</label>
+                            <input type="text" name="lastName" class="form-control" required value="Rostova">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-uppercase">Street Address</label>
+                            <input type="text" name="address" class="form-control" placeholder="742 Evergreen Terrace, Suite 4B" required value="450 Rue du Faubourg Saint-Honoré">
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label small fw-bold text-uppercase">City</label>
+                            <input type="text" name="city" class="form-control" required value="Paris">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold text-uppercase">Country / Region</label>
+                            <select name="country" class="form-select">
+                                <option value="FR" selected>France</option>
+                                <option value="US">United States</option>
+                                <option value="UK">United Kingdom</option>
+                                <option value="DE">Germany</option>
+                                <option value="IN">India</option>
+                                <option value="CA">Canada</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold text-uppercase">Postal Code</label>
+                            <input type="text" name="postalCode" class="form-control" required value="75008">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Payment Details with Live Interactive Card Preview -->
+                <div class="card border-0 rounded-4 shadow-sm p-4 mb-4 bg-white">
+                    <h5 class="font-serif fw-bold mb-3 d-flex align-items-center gap-2">
+                        <span class="rounded-circle bg-dark text-white d-inline-flex align-items-center justify-content-center" style="width:28px; height:28px; font-size:0.85rem;">3</span>
+                        Payment Method
+                    </h5>
+
+                    <!-- Payment Radios -->
+                    <div class="d-flex flex-column gap-2 mb-4">
+                        <div class="form-check p-3 border rounded-3 d-flex align-items-center justify-content-between">
+                            <div>
+                                <input class="form-check-input me-2" type="radio" name="paymentMethod" id="payCard" value="credit-card" checked onchange="togglePaymentSection('card')">
+                                <label class="form-check-label fw-bold" for="payCard">Credit / Debit Card</label>
+                            </div>
+                            <div class="text-muted fs-4">
+                                <i class="bi bi-credit-card-2-front"></i>
+                            </div>
+                        </div>
+
+                        <div class="form-check p-3 border rounded-3 d-flex align-items-center justify-content-between">
+                            <div>
+                                <input class="form-check-input me-2" type="radio" name="paymentMethod" id="payPayPal" value="paypal" onchange="togglePaymentSection('paypal')">
+                                <label class="form-check-label fw-bold" for="payPayPal">PayPal / Digital Wallet</label>
+                            </div>
+                            <div class="text-primary fs-5 fw-bold">
+                                <em>PayPal</em>
+                            </div>
+                        </div>
+
+                        <div class="form-check p-3 border rounded-3 d-flex align-items-center justify-content-between">
+                            <div>
+                                <input class="form-check-input me-2" type="radio" name="paymentMethod" id="payCod" value="cash-on-delivery" onchange="togglePaymentSection('cod')">
+                                <label class="form-check-label fw-bold" for="payCod">Cash on Delivery (COD)</label>
+                            </div>
+                            <div class="text-muted fs-5">
+                                <i class="bi bi-cash-stack"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Credit Card Visual Preview & Form Fields -->
+                    <div id="creditCardDetailsSection">
+                        <!-- Live Interactive Card Display -->
+                        <div class="interactive-card-preview mb-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="card-chip"></div>
+                                <span class="fw-bold tracking-widest small text-white text-opacity-75">AURA BLACK CARD</span>
+                            </div>
+                            <div class="card-number-display" id="previewCardNumber">4242 •••• •••• 4242</div>
+                            <div class="d-flex justify-content-between align-items-end">
+                                <div>
+                                    <div class="text-uppercase small text-white text-opacity-50" style="font-size:0.65rem;">Cardholder Name</div>
+                                    <div class="fw-bold small text-white" id="previewCardName">ELENA ROSTOVA</div>
+                                </div>
+                                <div>
+                                    <div class="text-uppercase small text-white text-opacity-50" style="font-size:0.65rem;">Expires</div>
+                                    <div class="fw-bold small text-white" id="previewCardExpiry">12/28</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Inputs -->
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label small fw-bold text-uppercase">Card Number</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white"><i class="bi bi-credit-card"></i></span>
+                                    <input type="text" id="cardNumberInput" class="form-control" placeholder="4242 4242 4242 4242" maxlength="19" value="4242 8821 9934 1029">
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold text-uppercase">Cardholder Full Name</label>
+                                <input type="text" id="cardNameInput" class="form-control" placeholder="Name as displayed on card" value="Elena Rostova">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-bold text-uppercase">Expiry (MM/YY)</label>
+                                <input type="text" id="cardExpiryInput" class="form-control" placeholder="12/28" maxlength="5" value="09/28">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-bold text-uppercase">CVV / CVC</label>
+                                <input type="password" id="cardCvvInput" class="form-control" placeholder="•••" maxlength="4" value="842">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alternate Notice for COD or PayPal -->
+                    <div id="alternatePaymentNotice" class="p-3 bg-light rounded-3 border" style="display:none;">
+                        <p class="small text-muted mb-0" id="alternatePaymentText"></p>
+                    </div>
+
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-luxury-primary py-3 fs-6">
+                        <i class="bi bi-lock-fill me-2"></i> Confirm & Authorize Order
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right: Order Summary -->
+            <div class="col-lg-5">
+                <div class="card border-0 rounded-4 shadow-sm p-4 bg-white sticky-top" style="top: 100px;">
+                    <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                        <h5 class="font-serif fw-bold mb-0">Your Bag Summary</h5>
+                        <span class="badge bg-dark rounded-pill">{{ totals.total_quantity }} Pieces</span>
+                    </div>
+
+                    <!-- Items List -->
+                    <div class="d-flex flex-column gap-3 mb-4 overflow-y-auto" style="max-height: 320px;">
+                        {% for item in cart %}
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="position-relative">
+                                    <img src="{{ url_for('static', filename='images/' ~ item.image) }}" alt="{{ item.name }}" style="width:60px; height:75px; object-fit:cover; border-radius:8px;">
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark" style="font-size:0.65rem;">
+                                        {{ item.quantity }}
+                                    </span>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold small text-dark">{{ item.name }}</div>
+                                    <div class="text-muted" style="font-size:0.75rem;">Size: {{ item.size }} | {{ item.color }}</div>
+                                </div>
+                                <div class="fw-bold small price-val" data-base-price="{{ item.price * item.quantity }}">
+                                    ${{ "%.2f"|format(item.price * item.quantity) }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Price Calculations -->
+                    <div class="border-top pt-3">
+                        <div class="d-flex justify-content-between mb-2 small">
+                            <span class="text-muted">Subtotal</span>
+                            <span class="fw-semibold price-val" data-base-price="{{ totals.subtotal }}">${{ "%.2f"|format(totals.subtotal) }}</span>
+                        </div>
+
+                        {% if totals.discount_amount > 0 %}
+                        <div class="d-flex justify-content-between mb-2 small text-danger fw-semibold">
+                            <span>Voucher ({{ totals.discount_label }})</span>
+                            <span>-${{ "%.2f"|format(totals.discount_amount) }}</span>
+                        </div>
+                        {% endif %}
+
+                        <div class="d-flex justify-content-between mb-2 small">
+                            <span class="text-muted">Shipping</span>
+                            <span>
+                                {% if totals.shipping_cost == 0 %}
+                                    <strong class="text-success">Complimentary</strong>
+                                {% else %}
+                                    <span class="price-val" data-base-price="{{ totals.shipping_cost }}">${{ "%.2f"|format(totals.shipping_cost) }}</span>
+                                {% endif %}
+                            </span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-3 small">
+                            <span class="text-muted">Taxes</span>
+                            <span class="price-val" data-base-price="{{ totals.estimated_tax }}">${{ "%.2f"|format(totals.estimated_tax) }}</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between fs-5 fw-bold border-top pt-3 text-dark">
+                            <span>Total Due</span>
+                            <span class="price-val" data-base-price="{{ totals.grand_total }}">${{ "%.2f"|format(totals.grand_total) }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Packaging Guarantee -->
+                    <div class="mt-4 p-3 bg-light rounded-3 text-muted small">
+                        <i class="bi bi-box2-heart text-gold me-2"></i> Delivered in our signature embossed luxury gift box with ribbon and dried botanicals.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
+
+{% block scripts_extra %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    initCheckoutCardPreview();
+});
+
+function togglePaymentSection(type) {
+    const cardSec = document.getElementById('creditCardDetailsSection');
+    const altSec = document.getElementById('alternatePaymentNotice');
+    const altText = document.getElementById('alternatePaymentText');
+
+    if (type === 'card') {
+        cardSec.style.display = 'block';
+        altSec.style.display = 'none';
+    } else if (type === 'paypal') {
+        cardSec.style.display = 'none';
+        altSec.style.display = 'block';
+        altText.innerHTML = '<i class="bi bi-info-circle me-1"></i> You will be redirected to PayPal to complete your authorization securely upon clicking <strong>Confirm & Authorize Order</strong>.';
+    } else if (type === 'cod') {
+        cardSec.style.display = 'none';
+        altSec.style.display = 'block';
+        altText.innerHTML = '<i class="bi bi-cash me-1"></i> Cash on Delivery selected. You will pay the courier in cash or card upon delivery package arrival.';
+    }
+}
+
+function validateCheckout() {
+    return true;
+}
+</script>
+{% endblock %}

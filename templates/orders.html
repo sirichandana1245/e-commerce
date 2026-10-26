@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Track Your Order | AURA ATELIER{% endblock %}
+
+{% block content %}
+
+<div class="py-4 bg-light border-bottom">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1 small">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-muted text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item active text-dark fw-bold" aria-current="page">Track Order</li>
+            </ol>
+        </nav>
+        <h1 class="font-serif fw-bold fs-2 mb-0">Atelier Order Tracker</h1>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="max-w-xl mx-auto" style="max-width: 800px;">
+        <!-- Search Order Box -->
+        <div class="card border-0 rounded-4 shadow-sm p-4 bg-white mb-5">
+            <h5 class="font-serif fw-bold mb-2">Track Your Creation Journey</h5>
+            <p class="small text-muted mb-4">Enter your unique Order Reference ID (found on your confirmation receipt or dispatch email).</p>
+            
+            <form action="{{ url_for('orders_view') }}" method="GET" class="row g-2">
+                <div class="col-md-9">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                        <input type="text" name="order_id" class="form-control" placeholder="e.g. AUR-XXXXXX" value="{{ searched_id }}" required>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-luxury-primary w-100">Locate Order</button>
+                </div>
+            </form>
+        </div>
+
+        {% if order %}
+            <!-- Found Order Details -->
+            <div class="card border-0 rounded-4 shadow-sm p-4 bg-white mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom flex-wrap gap-2">
+                    <div>
+                        <span class="product-category-text">Order Status Found</span>
+                        <h4 class="font-serif fw-bold mb-0">{{ order.order_id }}</h4>
+                    </div>
+                    <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold">
+                        <i class="bi bi-clock-history me-1"></i> {{ order.status }}
+                    </span>
+                </div>
+
+                <!-- Timeline -->
+                <div class="timeline-stepper my-4">
+                    <div class="timeline-step completed">
+                        <div class="step-circle"><i class="bi bi-check"></i></div>
+                        <span class="small fw-bold text-dark">Order Confirmed</span>
+                        <span class="text-muted" style="font-size:0.7rem;">{{ order.date }}</span>
+                    </div>
+                    <div class="timeline-step active">
+                        <div class="step-circle"><i class="bi bi-box-seam"></i></div>
+                        <span class="small fw-bold text-dark">Quality Inspection</span>
+                        <span class="text-gold fw-bold" style="font-size:0.7rem;">Passed</span>
+                    </div>
+                    <div class="timeline-step">
+                        <div class="step-circle"><i class="bi bi-truck"></i></div>
+                        <span class="small fw-bold text-muted">In Transit</span>
+                        <span class="text-muted" style="font-size:0.7rem;">Express Carrier</span>
+                    </div>
+                    <div class="timeline-step">
+                        <div class="step-circle"><i class="bi bi-house-door"></i></div>
+                        <span class="small fw-bold text-muted">Delivered</span>
+                        <span class="text-muted" style="font-size:0.7rem;">Est: {{ order.estimated_delivery }}</span>
+                    </div>
+                </div>
+
+                <!-- Items in this order -->
+                <h6 class="small fw-bold text-uppercase text-muted mb-3">Enclosed Items</h6>
+                <div class="d-flex flex-column gap-3 mb-4">
+                    {% for item in order['items'] %}
+                        <div class="d-flex align-items-center justify-content-between py-2 border-bottom border-light">
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="{{ url_for('static', filename='images/' ~ item.image) }}" alt="{{ item.name }}" style="width:50px; height:65px; object-fit:cover; border-radius:6px;">
+                                <div>
+                                    <h6 class="mb-0 fw-bold small text-dark">{{ item.name }}</h6>
+                                    <div class="small text-muted" style="font-size:0.75rem;">
+                                        Qty: {{ item.quantity }} | Size: {{ item.size }} | {{ item.color }}
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="fw-bold small price-val" data-base-price="{{ item.price * item.quantity }}">
+                                ${{ "%.2f"|format(item.price * item.quantity) }}
+                            </span>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="p-3 bg-light rounded-3 d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="small text-muted">Total Paid</div>
+                        <div class="fw-bold fs-5 text-dark price-val" data-base-price="{{ order.totals.grand_total }}">${{ "%.2f"|format(order.totals.grand_total) }}</div>
+                    </div>
+                    <a href="{{ url_for('order_confirmation', order_id=order.order_id) }}" class="btn btn-sm btn-outline-dark">
+                        View Full Receipt
+                    </a>
+                </div>
+            </div>
+        {% elif searched_id %}
+            <div class="alert alert-warning text-center rounded-4 p-4 shadow-sm">
+                <i class="bi bi-exclamation-triangle fs-2 mb-2 d-block"></i>
+                <h5 class="fw-bold">No Order Found</h5>
+                <p class="small text-muted mb-0">We could not locate an order matching ID "<strong>{{ searched_id }}</strong>". Please double check the ID format or place an order first.</p>
+            </div>
+        {% endif %}
+
+        <!-- Recent Store Orders (Mock lookup table for easy testing) -->
+        {% if all_orders %}
+            <div class="card border-0 rounded-4 shadow-sm p-4 bg-white mt-4">
+                <h6 class="font-serif fw-bold mb-3">Recent Orders Placed in this Session</h6>
+                <div class="list-group list-group-flush">
+                    {% for o in all_orders %}
+                        <a href="{{ url_for('orders_view', order_id=o.order_id) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center px-0">
+                            <div>
+                                <span class="fw-bold text-dark">{{ o.order_id }}</span>
+                                <span class="text-muted small ms-2">• {{ o.customer.name }} ({{ o['items']|length }} items)</span>
+                            </div>
+                            <span class="badge bg-light text-dark border">{{ o.totals.grand_total|round(2) }}</span>
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

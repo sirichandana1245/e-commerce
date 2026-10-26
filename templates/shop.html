@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+
+{% block title %}Shop Atelier Collections | AURA ATELIER{% endblock %}
+
+{% block content %}
+
+<!-- Header Banner -->
+<div class="py-4 bg-light border-bottom">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1 small">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-muted text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('shop') }}" class="text-muted text-decoration-none">Shop</a></li>
+                <li class="breadcrumb-item active text-dark fw-bold" aria-current="page">{{ current_category|title }}</li>
+            </ol>
+        </nav>
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h1 class="font-serif fw-bold fs-2 mb-1">
+                    {% if current_category == 'all' %}
+                        The Full Atelier Catalog
+                    {% elif current_category == 'dresses' %}
+                        Artisan Dresses & Gowns
+                    {% elif current_category == 'knitwear' %}
+                        Fine-Gauge Knits & Sweaters
+                    {% elif current_category == 'new-season' %}
+                        Spring / Summer 2026 Capsule
+                    {% else %}
+                        {{ current_category|title }} Collection
+                    {% endif %}
+                </h1>
+                <p class="text-muted small mb-0">Showing {{ total_found }} handcrafted sustainable designs</p>
+            </div>
+            
+            <!-- Quick Category Pill Selector -->
+            <div class="d-none d-md-flex gap-2">
+                <a href="{{ url_for('shop', category='all') }}" class="btn btn-sm {% if current_category == 'all' %}btn-dark{% else %}btn-outline-secondary{% endif %} rounded-pill px-3">All</a>
+                <a href="{{ url_for('shop', category='dresses') }}" class="btn btn-sm {% if current_category == 'dresses' %}btn-dark{% else %}btn-outline-secondary{% endif %} rounded-pill px-3">Dresses</a>
+                <a href="{{ url_for('shop', category='knitwear') }}" class="btn btn-sm {% if current_category == 'knitwear' %}btn-dark{% else %}btn-outline-secondary{% endif %} rounded-pill px-3">Knitwear</a>
+                <a href="{{ url_for('shop', category='tops') }}" class="btn btn-sm {% if current_category == 'tops' %}btn-dark{% else %}btn-outline-secondary{% endif %} rounded-pill px-3">Tops</a>
+                <a href="{{ url_for('shop', category='new-season') }}" class="btn btn-sm {% if current_category == 'new-season' %}btn-dark{% else %}btn-outline-secondary{% endif %} rounded-pill px-3">New Season</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row g-4">
+        <!-- Sidebar Filters -->
+        <div class="col-lg-3">
+            <div class="filter-card sticky-top" style="top: 90px; z-index: 10;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="filter-heading mb-0">Refine Selection</h5>
+                    {% if current_category != 'all' or search_query or sort_by != 'featured' %}
+                        <a href="{{ url_for('shop') }}" class="small text-danger text-decoration-none fw-semibold">Reset</a>
+                    {% endif %}
+                </div>
+
+                <form action="{{ url_for('shop') }}" method="GET" id="filterForm">
+                    <!-- Search Query -->
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-uppercase">Keyword Search</label>
+                        <div class="input-group input-group-sm">
+                            <input type="text" name="q" class="form-control" placeholder="Linen, dress, wrap..." value="{{ search_query }}">
+                            <button class="btn btn-outline-dark" type="submit"><i class="bi bi-search"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Category List -->
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-uppercase">Capsules & Categories</label>
+                        <div class="d-flex flex-column gap-1">
+                            {% for cat in categories %}
+                                <a href="{{ url_for('shop', category=cat.slug, sort=sort_by, q=search_query) }}" 
+                                   class="category-nav-link {% if current_category == cat.slug %}active{% endif %}">
+                                    <span><i class="bi {{ cat.icon }} me-2 text-gold"></i> {{ cat.name }}</span>
+                                    {% if current_category == cat.slug %}
+                                        <i class="bi bi-check2"></i>
+                                    {% endif %}
+                                </a>
+                            {% endfor %}
+                        </div>
+                        <input type="hidden" name="category" value="{{ current_category }}">
+                    </div>
+
+                    <!-- Price Filter -->
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-uppercase d-flex justify-content-between">
+                            <span>Max Price</span>
+                            <span class="text-dark fw-bold" id="priceDisplayVal">${{ "%.0f"|format(max_price) }}</span>
+                        </label>
+                        <input type="range" class="form-range" name="max_price" id="maxPriceRange" min="50" max="300" step="10" value="{{ max_price }}" oninput="document.getElementById('priceDisplayVal').textContent = '$' + this.value;">
+                        <div class="d-flex justify-content-between text-muted small">
+                            <span>$50</span>
+                            <span>$300</span>
+                        </div>
+                    </div>
+
+                    <!-- Sort Selection -->
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-uppercase">Sort By</label>
+                        <select name="sort" class="form-select form-select-sm" onchange="document.getElementById('filterForm').submit();">
+                            <option value="featured" {% if sort_by == 'featured' %}selected{% endif %}>Curated / Featured</option>
+                            <option value="price-low" {% if sort_by == 'price-low' %}selected{% endif %}>Price: Low to High</option>
+                            <option value="price-high" {% if sort_by == 'price-high' %}selected{% endif %}>Price: High to Low</option>
+                            <option value="rating" {% if sort_by == 'rating' %}selected{% endif %}>Client Rating</option>
+                            <option value="name" {% if sort_by == 'name' %}selected{% endif %}>Name: A to Z</option>
+                        </select>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-luxury-primary btn-sm">Apply Filters</button>
+                    </div>
+                </form>
+
+                <!-- Sustainability Guarantee Banner -->
+                <div class="mt-4 p-3 bg-light rounded-3 border text-center">
+                    <i class="bi bi-patch-check-fill text-gold fs-4"></i>
+                    <h6 class="fw-bold mt-2 mb-1" style="font-size:0.85rem;">Artisan Guaranteed</h6>
+                    <p class="small text-muted mb-0" style="font-size:0.75rem;">Every piece comes with a certificate of fabric origin & ethical stitch verification.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Listing Grid -->
+        <div class="col-lg-9">
+            <!-- Active Filter Badges -->
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <span class="small text-muted">Active Filters:</span>
+                    <span class="badge bg-white text-dark border px-3 py-2 rounded-pill small">
+                        Category: <strong>{{ current_category|title }}</strong>
+                    </span>
+                    {% if search_query %}
+                    <span class="badge bg-white text-dark border px-3 py-2 rounded-pill small">
+                        Query: "<strong>{{ search_query }}</strong>"
+                    </span>
+                    {% endif %}
+                    {% if max_price < 500 %}
+                    <span class="badge bg-white text-dark border px-3 py-2 rounded-pill small">
+                        Up to: <strong>${{ "%.0f"|format(max_price) }}</strong>
+                    </span>
+                    {% endif %}
+                </div>
+
+                <div class="small text-muted">
+                    Showing <strong>{{ products|length }}</strong> of {{ products|length }} items
+                </div>
+            </div>
+
+            {% if products %}
+                <div class="row g-4">
+                    {% for p in products %}
+                        <div class="col-6 col-md-4">
+                            <div class="product-card">
+                                <div class="product-image-wrapper">
+                                    <a href="{{ url_for('product_detail', product_id=p.id) }}">
+                                        <img src="{{ url_for('static', filename='images/' ~ p.image) }}" alt="{{ p.name }}" loading="lazy">
+                                    </a>
+
+                                    <!-- Badge -->
+                                    {% if p.badge %}
+                                        <span class="card-badge {% if p.badge == 'Bestseller' %}badge-bestseller{% elif p.badge == 'Trending' %}badge-trending{% elif p.badge == 'Limited Edition' %}badge-limited{% else %}badge-sale{% endif %}">
+                                            {{ p.badge }}
+                                        </span>
+                                    {% endif %}
+
+                                    <!-- Floating Actions -->
+                                    <div class="card-floating-actions">
+                                        <button type="button" class="action-round-btn btn-wishlist-toggle" data-product-id="{{ p.id }}" onclick="toggleWishlist({{ p.id }}, this)" title="Save to Wishlist">
+                                            <i class="bi bi-heart"></i>
+                                        </button>
+                                        <button type="button" class="action-round-btn btn-quick-view" data-product-id="{{ p.id }}" title="Quick View">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                    </div>
+
+                                    <!-- Quick Add -->
+                                    <button type="button" class="card-quick-add" onclick="addToCart({{ p.id }}, 1, '{{ p.sizes[0] }}', '{{ p.colors[0].name }}')">
+                                        <i class="bi bi-bag-plus me-1"></i> Quick Add To Bag
+                                    </button>
+                                </div>
+
+                                <div class="product-content">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <span class="product-category-text">{{ p.category }}</span>
+                                        <div class="star-rating">
+                                            <i class="bi bi-star-fill"></i>
+                                            <span class="text-dark fw-bold small ms-1">{{ p.rating }}</span>
+                                        </div>
+                                    </div>
+                                    <h3 class="product-title">
+                                        <a href="{{ url_for('product_detail', product_id=p.id) }}">{{ p.name }}</a>
+                                    </h3>
+                                    <p class="small text-muted text-truncate mb-2">{{ p.short_desc }}</p>
+                                    <div class="product-price-row">
+                                        <span class="price-current price-val" data-base-price="{{ p.price }}">${{ "%.2f"|format(p.price) }}</span>
+                                        {% if p.on_sale %}
+                                            <span class="price-original price-val" data-base-price="{{ p.original_price }}">${{ "%.2f"|format(p.original_price) }}</span>
+                                            <span class="discount-pill">-{{ p.discount_percent }}%</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <!-- Empty State -->
+                <div class="text-center py-5 bg-white rounded-4 border p-5 shadow-sm">
+                    <i class="bi bi-search fs-1 text-muted"></i>
+                    <h3 class="font-serif fw-bold mt-3">No Pieces Match Your Criteria</h3>
+                    <p class="text-muted small">We could not find any creations that fit your current filters. Try resetting your search or price criteria.</p>
+                    <a href="{{ url_for('shop') }}" class="btn btn-luxury-primary mt-3">View All Creations</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

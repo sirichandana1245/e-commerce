@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AURA ATELIER | Luxury Sustainable Apparel & Lifestyle{% endblock %}</title>
+    <meta name="description" content="Discover AURA Atelier. Artisanal sustainable women's apparel, European linen dresses, cashmere-infused knitwear and luxury accessories.">
+    
+    <!-- Google Fonts: Playfair Display & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..800;1,400..700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- Custom Bespoke Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    {% block head_extra %}{% endblock %}
+</head>
+<body>
+
+    <!-- Announcement Bar -->
+    <div class="announcement-bar text-center">
+        <div class="container d-flex justify-content-between align-items-center">
+            <span class="d-none d-md-inline" style="font-size:0.75rem;"><i class="bi bi-shield-check me-1"></i> Ethically Handcrafted in Europe</span>
+            <div>
+                <span>✨ Enjoy 20% off your first atelier order with code <strong class="badge-gold ms-1">WELCOME20</strong></span>
+                <span class="ms-3 d-none d-sm-inline">• Free Worldwide Express Over $150</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <select id="currencySelector" class="form-select form-select-sm border-0 bg-transparent text-light p-0" style="width: auto; font-size:0.75rem; cursor:pointer;">
+                    <option value="USD" class="text-dark">USD ($)</option>
+                    <option value="EUR" class="text-dark">EUR (€)</option>
+                    <option value="GBP" class="text-dark">GBP (£)</option>
+                    <option value="INR" class="text-dark">INR (₹)</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation Bar -->
+    <nav class="navbar navbar-expand-lg luxury-navbar sticky-top">
+        <div class="container">
+            <!-- Mobile Toggle -->
+            <button class="navbar-toggler border-0 p-1 me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="bi bi-list fs-2 text-dark"></i>
+            </button>
+
+            <!-- Brand Logo -->
+            <a class="navbar-brand d-flex flex-column align-items-center text-center me-4" href="{{ url_for('index') }}">
+                <span class="brand-logo-text">AURA</span>
+                <span class="brand-subtext">ATELIER</span>
+            </a>
+
+            <!-- Nav Links -->
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link-custom {% if request.path == '/' %}active{% endif %}" href="{{ url_for('index') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link-custom {% if request.path == '/shop' and not request.args.get('category') %}active{% endif %}" href="{{ url_for('shop') }}">Shop All</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link-custom {% if request.args.get('category') == 'dresses' %}active{% endif %}" href="{{ url_for('shop', category='dresses') }}">Dresses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link-custom {% if request.args.get('category') == 'knitwear' %}active{% endif %}" href="{{ url_for('shop', category='knitwear') }}">Knitwear</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link-custom {% if request.args.get('category') == 'new-season' %}active{% endif %}" href="{{ url_for('shop', category='new-season') }}">New Season</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link-custom {% if request.path == '/about' %}active{% endif %}" href="{{ url_for('about') }}">Story</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link-custom {% if request.path == '/orders' %}active{% endif %}" href="{{ url_for('orders_view') }}">Track Order</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Header Right Icons -->
+            <div class="d-flex align-items-center gap-1">
+                <!-- Search Input with Dropdown Autocomplete -->
+                <div class="position-relative d-none d-md-block me-2" style="width: 220px;">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-white border-end-0 rounded-start-pill text-muted ps-3">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" id="headerSearchInput" class="form-control border-start-0 rounded-end-pill pe-3" placeholder="Search atelier..." autocomplete="off">
+                    </div>
+                    <div id="headerSearchResults" class="dropdown-menu shadow-lg p-0 w-100 mt-2 border-0 overflow-hidden" style="display:none; max-height:360px; overflow-y:auto; z-index:1050;"></div>
+                </div>
+
+                <!-- Wishlist Icon -->
+                <a href="{{ url_for('wishlist') }}" class="nav-icon-btn" title="View Wishlist">
+                    <i class="bi bi-heart"></i>
+                    <span class="badge-count wishlist-badge-count" style="display:none;">0</span>
+                </a>
+
+                <!-- Cart Drawer Toggle -->
+                <button class="nav-icon-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#cartDrawer" aria-controls="cartDrawer" title="View Shopping Bag">
+                    <i class="bi bi-bag"></i>
+                    <span class="badge-count cart-badge-count" style="{% if cart_count == 0 %}display:none;{% endif %}">{{ cart_count }}</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Notifications -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="container mt-3">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category if category != 'message' else 'info' }} alert-dismissible fade show d-flex align-items-center justify-content-between shadow-sm" role="alert">
+                <div>
+                    <i class="bi bi-info-circle-fill me-2"></i> {{ message }}
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Main Content Block -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Slide-over Offcanvas Shopping Bag Drawer -->
+    <div class="offcanvas offcanvas-end cart-drawer p-3" tabindex="-1" id="cartDrawer" aria-labelledby="cartDrawerLabel">
+        <div class="offcanvas-header border-bottom pb-3">
+            <div>
+                <h5 class="offcanvas-title font-serif fw-bold mb-0" id="cartDrawerLabel">Your Shopping Bag</h5>
+                <span class="text-muted small">Curated Luxury Essentials</span>
+            </div>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+
+        <div class="offcanvas-body d-flex flex-column px-0 py-3">
+            <!-- Free Shipping Progress Tracker -->
+            <div class="px-3 pb-3 border-bottom">
+                <div id="drawerFreeShippingMsg" class="small text-muted mb-1">
+                    {% if cart_totals.free_shipping_eligible %}
+                        <i class="bi bi-stars text-warning me-1"></i> <strong>Congratulations!</strong> You have unlocked FREE Express Shipping!
+                    {% else %}
+                        Add <span class="fw-bold text-dark">${{ "%.2f"|format(cart_totals.amount_to_free_shipping) }}</span> more for <strong>FREE Express Shipping</strong>!
+                    {% endif %}
+                </div>
+                <div class="free-shipping-progress">
+                    <div id="drawerFreeShippingBar" class="free-shipping-bar" style="width: {{ [100, ((cart_totals.subtotal / 150.0) * 100)|round|int]|min }}%;"></div>
+                </div>
+            </div>
+
+            <!-- Items Container -->
+            <div id="drawerCartItemsList" class="flex-grow-1 overflow-y-auto px-3 py-2">
+                {% if cart_items %}
+                    {% for item in cart_items %}
+                        <div class="cart-item-row">
+                            <img src="{{ url_for('static', filename='images/' ~ item.image) }}" alt="{{ item.name }}" class="cart-item-thumb">
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h6 class="mb-1" style="font-size:0.95rem; font-weight:600;">{{ item.name }}</h6>
+                                    <button class="btn btn-sm text-muted p-0" onclick="removeCartItem('{{ item.item_key }}')" title="Remove">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </div>
+                                <div class="text-muted mb-2" style="font-size:0.78rem;">
+                                    Size: <span class="fw-semibold text-dark">{{ item.size }}</span> | Color: <span class="fw-semibold text-dark">{{ item.color }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="quantity-stepper" style="transform: scale(0.85); transform-origin: left center;">
+                                        <button class="quantity-btn" onclick="updateCartItem('{{ item.item_key }}', -1)">-</button>
+                                        <input type="text" class="quantity-input" value="{{ item.quantity }}" readonly>
+                                        <button class="quantity-btn" onclick="updateCartItem('{{ item.item_key }}', 1)">+</button>
+                                    </div>
+                                    <span class="fw-bold price-val" data-base-price="{{ item.price * item.quantity }}">${{ "%.2f"|format(item.price * item.quantity) }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-bag-x fs-1 text-muted"></i>
+                        <p class="mt-3 text-muted fw-semibold">Your shopping bag is empty.</p>
+                        <a href="{{ url_for('shop') }}" class="btn btn-sm btn-luxury-primary mt-2">Discover Collections</a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Drawer Totals & Checkout Actions -->
+            <div id="drawerCartTotals" class="p-3 border-top bg-light" style="{% if not cart_items %}display:none;{% endif %}">
+                <!-- Promo Code Box -->
+                <div class="input-group input-group-sm mb-3">
+                    <input type="text" id="couponInput" class="form-control" placeholder="Promo code (e.g. WELCOME20)" value="{{ cart_totals.applied_coupon or '' }}">
+                    <button class="btn btn-outline-dark" type="button" onclick="applyCouponCode()">Apply</button>
+                </div>
+
+                <div class="d-flex justify-content-between mb-1 small text-muted">
+                    <span>Subtotal</span>
+                    <span class="price-val" id="drawerSubtotalVal" data-base-price="{{ cart_totals.subtotal }}">${{ "%.2f"|format(cart_totals.subtotal) }}</span>
+                </div>
+                {% if cart_totals.discount_amount > 0 %}
+                <div class="d-flex justify-content-between mb-1 small text-danger fw-semibold">
+                    <span>Discount ({{ cart_totals.discount_label }})</span>
+                    <span>-${{ "%.2f"|format(cart_totals.discount_amount) }}</span>
+                </div>
+                {% endif %}
+                <div class="d-flex justify-content-between mb-2 small text-muted">
+                    <span>Shipping</span>
+                    <span>{% if cart_totals.shipping_cost == 0 %}<strong class="text-success">FREE</strong>{% else %}${{ "%.2f"|format(cart_totals.shipping_cost) }}{% endif %}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3 fw-bold fs-6 border-top pt-2">
+                    <span>Estimated Total</span>
+                    <span class="price-val" id="drawerGrandTotalVal" data-base-price="{{ cart_totals.grand_total }}">${{ "%.2f"|format(cart_totals.grand_total) }}</span>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('checkout_page') }}" class="btn btn-luxury-primary text-center">
+                        Proceed to Checkout <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                    <a href="{{ url_for('cart_page') }}" class="btn btn-sm btn-outline-secondary text-center">
+                        View Full Bag & Calculation
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick View Modal -->
+    <div class="modal fade" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 rounded-4 overflow-hidden shadow-lg">
+                <div class="modal-body p-0">
+                    <button type="button" class="btn-close position-absolute top-0 end-0 m-3 z-3 bg-white p-2 rounded-circle shadow-sm" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="row g-0">
+                        <div class="col-md-6 bg-light d-flex align-items-center justify-content-center p-3">
+                            <img id="qvImage" src="" alt="Product preview" class="img-fluid rounded-3 shadow-sm" style="max-height: 480px; width:100%; object-fit:cover;">
+                        </div>
+                        <div class="col-md-6 p-4 d-flex flex-column justify-content-between">
+                            <div>
+                                <span id="qvCategory" class="product-category-text">Category</span>
+                                <h3 id="qvTitle" class="font-serif fw-bold mb-2">Product Title</h3>
+                                <div class="d-flex align-items-center gap-2 mb-3">
+                                    <div class="star-rating">
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                    </div>
+                                    <span class="review-count-text">(4.9 Atelier Score)</span>
+                                </div>
+                                <div class="fs-4 fw-bold text-dark mb-3">
+                                    <span id="qvPrice" class="price-val" data-base-price="0">$0.00</span>
+                                </div>
+                                <p id="qvDesc" class="text-muted small mb-3">Short description</p>
+
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-uppercase mb-1">Select Size</label>
+                                    <div id="qvSizes" class="d-flex gap-2"></div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-uppercase mb-1">Available Colors</label>
+                                    <div id="qvColors" class="d-flex gap-2 align-items-center"></div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label small fw-bold text-uppercase mb-1">Fabric & Craft</label>
+                                    <div id="qvFabric" class="small text-muted fst-italic"></div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-3 align-items-center pt-3 border-top">
+                                <div class="quantity-stepper">
+                                    <button class="quantity-btn" onclick="const q=document.getElementById('qvQuantity'); q.value=Math.max(1, parseInt(q.value)-1);">-</button>
+                                    <input type="text" id="qvQuantity" class="quantity-input" value="1" readonly>
+                                    <button class="quantity-btn" onclick="const q=document.getElementById('qvQuantity'); q.value=parseInt(q.value)+1;">+</button>
+                                </div>
+                                <button id="qvAddToCartBtn" class="btn btn-luxury-primary flex-grow-1">
+                                    <i class="bi bi-bag-plus me-2"></i> Add to Bag
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Luxury Footer -->
+    <footer class="luxury-footer">
+        <div class="container">
+            <div class="row g-4 mb-5">
+                <!-- Brand Info -->
+                <div class="col-lg-4 col-md-6">
+                    <h3 class="font-serif fw-bold text-white mb-2" style="letter-spacing:0.08em;">AURA ATELIER</h3>
+                    <p class="small text-muted pe-lg-4">
+                        Pioneering mindful luxury. Our garments celebrate natural European linen, fine cashmere, and architectural silhouettes, ethically crafted for timeless beauty.
+                    </p>
+                    <div class="mt-3">
+                        <a href="#" class="footer-social-icon"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="footer-social-icon"><i class="bi bi-pinterest"></i></a>
+                        <a href="#" class="footer-social-icon"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="footer-social-icon"><i class="bi bi-tiktok"></i></a>
+                    </div>
+                </div>
+
+                <!-- Collections Links -->
+                <div class="col-lg-2 col-md-3 col-6">
+                    <h6 class="text-white text-uppercase fw-bold mb-3 small" style="letter-spacing:0.08em;">Collections</h6>
+                    <a href="{{ url_for('shop', category='dresses') }}" class="footer-link">Linen Dresses</a>
+                    <a href="{{ url_for('shop', category='knitwear') }}" class="footer-link">Soft Knitwear</a>
+                    <a href="{{ url_for('shop', category='tops') }}" class="footer-link">Artisan Blouses</a>
+                    <a href="{{ url_for('shop', category='accessories') }}" class="footer-link">Shoes & Bags</a>
+                    <a href="{{ url_for('shop', category='new-season') }}" class="footer-link">New Season</a>
+                </div>
+
+                <!-- Concierge & Care -->
+                <div class="col-lg-2 col-md-3 col-6">
+                    <h6 class="text-white text-uppercase fw-bold mb-3 small" style="letter-spacing:0.08em;">Customer Care</h6>
+                    <a href="{{ url_for('orders_view') }}" class="footer-link">Track Your Order</a>
+                    <a href="{{ url_for('about') }}" class="footer-link">Ethical Sourcing</a>
+                    <a href="{{ url_for('contact') }}" class="footer-link">Private Styling</a>
+                    <a href="{{ url_for('contact') }}" class="footer-link">Shipping & Returns</a>
+                    <a href="{{ url_for('contact') }}" class="footer-link">Contact Concierge</a>
+                </div>
+
+                <!-- Newsletter Subscription -->
+                <div class="col-lg-4 col-md-6">
+                    <h6 class="text-white text-uppercase fw-bold mb-3 small" style="letter-spacing:0.08em;">The Private Atelier Journal</h6>
+                    <p class="small text-muted mb-3">
+                        Subscribe to receive seasonal lookbooks, early access to limited capsule editions, and 20% off your first order.
+                    </p>
+                    <form id="newsletterForm">
+                        <div class="input-group">
+                            <input type="email" id="newsletterEmail" class="form-control rounded-start-pill bg-dark text-white border-secondary" placeholder="Enter your email address..." required>
+                            <button class="btn btn-luxury-gold rounded-end-pill px-4" type="submit">Join</button>
+                        </div>
+                    </form>
+                    <div class="mt-3 small text-muted">
+                        <i class="bi bi-lock me-1"></i> We respect your privacy. Unsubscribe anytime.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Line & Payment Badges -->
+            <div class="pt-4 border-top border-secondary border-opacity-25 d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+                <div class="small text-muted">
+                    &copy; {{ current_year }} AURA ATELIER. All rights reserved. Handcrafted with passion.
+                </div>
+                <div class="d-flex align-items-center gap-3 text-muted fs-4">
+                    <i class="bi bi-credit-card-2-front" title="Visa / Mastercard"></i>
+                    <i class="bi bi-shield-lock" title="256-Bit SSL Encryption"></i>
+                    <i class="bi bi-box-seam" title="Express Delivery"></i>
+                    <i class="bi bi-arrow-repeat" title="30-Day Hassle-Free Returns"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5.3 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Main Custom JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    {% block scripts_extra %}{% endblock %}
+</body>
+</html>

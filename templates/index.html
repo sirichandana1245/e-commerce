@@ -1,0 +1,437 @@
+{% extends "base.html" %}
+
+{% block title %}AURA ATELIER | High-Fashion Sustainable Women's Apparel{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<section class="hero-editorial-section">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <span class="hero-tagline">
+                    <i class="bi bi-sparkle me-1"></i> Spring / Summer 2026 Collection
+                </span>
+                <h1 class="hero-title">
+                    Poetic Silhouettes, <br>Pure Natural Fibers.
+                </h1>
+                <p class="hero-desc">
+                    Artisanal European linen dresses, cloud-soft cashmere knits, and architectural accessories designed to transcend seasons. Ethically crafted for the modern muse.
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="{{ url_for('shop') }}" class="btn btn-luxury-primary">
+                        Explore Collection <i class="bi bi-arrow-right"></i>
+                    </a>
+                    <a href="{{ url_for('shop', category='dresses') }}" class="btn btn-luxury-outline">
+                        Shop Dresses
+                    </a>
+                </div>
+
+                <!-- Scarcity / Quality Micro-Stats -->
+                <div class="d-flex align-items-center gap-4 mt-5 pt-3 border-top border-secondary border-opacity-25">
+                    <div>
+                        <div class="fw-bold fs-4 text-dark font-serif">100%</div>
+                        <div class="small text-muted">Organic Certified</div>
+                    </div>
+                    <div class="vr"></div>
+                    <div>
+                        <div class="fw-bold fs-4 text-dark font-serif">4.9 / 5</div>
+                        <div class="small text-muted">Client Rating</div>
+                    </div>
+                    <div class="vr"></div>
+                    <div>
+                        <div class="fw-bold fs-4 text-dark font-serif">Zero</div>
+                        <div class="small text-muted">Fast-Fashion Waste</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="hero-image-frame position-relative">
+                    <img src="{{ url_for('static', filename='images/pexels-anastasia-shuraeva-5705478.jpg') }}" alt="AURA Atelier Couture Collection" class="img-fluid w-100" style="object-fit:cover; max-height:560px;">
+                    <div class="hero-badge-floating">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="trust-icon-box" style="width:40px; height:40px; font-size:1.1rem;">
+                                <i class="bi bi-award-fill"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 fw-bold font-serif" style="font-size:0.95rem;">Artisan Crafted Closet</h6>
+                                <p class="small text-muted mb-0">Handmade in small Parisian & Milanese batches</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Trust & Value Proposition Strip -->
+<section class="trust-strip">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3 col-sm-6">
+                <div class="trust-item">
+                    <div class="trust-icon-box">
+                        <i class="bi bi-feather"></i>
+                    </div>
+                    <div>
+                        <h4 class="trust-title">Sustainable Fibers</h4>
+                        <p class="trust-desc">European flax linen & GOTS organic cotton.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-sm-6">
+                <div class="trust-item">
+                    <div class="trust-icon-box">
+                        <i class="bi bi-airplane-engines"></i>
+                    </div>
+                    <div>
+                        <h4 class="trust-title">Complimentary Express</h4>
+                        <p class="trust-desc">Free worldwide express on orders over $150.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-sm-6">
+                <div class="trust-item">
+                    <div class="trust-icon-box">
+                        <i class="bi bi-arrow-repeat"></i>
+                    </div>
+                    <div>
+                        <h4 class="trust-title">30-Day Easy Returns</h4>
+                        <p class="trust-desc">Complimentary size exchanges & returns.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-sm-6">
+                <div class="trust-item">
+                    <div class="trust-icon-box">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <div>
+                        <h4 class="trust-title">Mindful Production</h4>
+                        <p class="trust-desc">Ethical living wages & zero deadstock.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Category Showcase Pills / Banner -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="product-category-text">Explore By Category</span>
+            <h2 class="editorial-heading fw-bold fs-2 mt-1">Curated Capsules</h2>
+            <p class="text-muted small">Select an aesthetic to discover our seasonal essentials</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <a href="{{ url_for('shop', category='dresses') }}" class="d-block text-decoration-none">
+                    <div class="position-relative rounded-4 overflow-hidden shadow-sm" style="height:320px;">
+                        <img src="{{ url_for('static', filename='images/pexels-ron-lach-8386652.jpg') }}" alt="Dresses Capsule" class="w-100 h-100 object-fit-cover" style="transition: transform 0.5s ease;">
+                        <div class="position-absolute bottom-0 start-0 end-0 p-4" style="background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);">
+                            <span class="badge bg-light text-dark mb-1">12 Designs</span>
+                            <h4 class="text-white font-serif mb-0">Linen & Wrap Dresses</h4>
+                            <span class="text-light small">Explore Collection <i class="bi bi-arrow-right ms-1"></i></span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-md-4">
+                <a href="{{ url_for('shop', category='knitwear') }}" class="d-block text-decoration-none">
+                    <div class="position-relative rounded-4 overflow-hidden shadow-sm" style="height:320px;">
+                        <img src="{{ url_for('static', filename='images/pexels-ron-lach-8386642.jpg') }}" alt="Knitwear Capsule" class="w-100 h-100 object-fit-cover" style="transition: transform 0.5s ease;">
+                        <div class="position-absolute bottom-0 start-0 end-0 p-4" style="background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);">
+                            <span class="badge bg-light text-dark mb-1">Fine Merino & Cashmere</span>
+                            <h4 class="text-white font-serif mb-0">Cloud-Soft Knitwear</h4>
+                            <span class="text-light small">Explore Collection <i class="bi bi-arrow-right ms-1"></i></span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-md-4">
+                <a href="{{ url_for('shop', category='accessories') }}" class="d-block text-decoration-none">
+                    <div class="position-relative rounded-4 overflow-hidden shadow-sm" style="height:320px;">
+                        <img src="{{ url_for('static', filename='images/pexels-pnw-prod-9218397.jpg') }}" alt="Accessories Capsule" class="w-100 h-100 object-fit-cover" style="transition: transform 0.5s ease;">
+                        <div class="position-absolute bottom-0 start-0 end-0 p-4" style="background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);">
+                            <span class="badge bg-light text-dark mb-1">Handcrafted Leather</span>
+                            <h4 class="text-white font-serif mb-0">Resort Shoes & Bags</h4>
+                            <span class="text-light small">Explore Collection <i class="bi bi-arrow-right ms-1"></i></span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Bestseller Showcase Grid -->
+<section class="py-5 bg-white border-top border-bottom border-light">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-2">
+            <div>
+                <span class="product-category-text">Most Coveted</span>
+                <h2 class="editorial-heading fw-bold fs-2 mb-0">Atelier Bestsellers</h2>
+            </div>
+            <a href="{{ url_for('shop') }}" class="btn btn-sm btn-luxury-outline">
+                View All Pieces <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+
+        <div class="row g-4">
+            {% for p in products[:4] %}
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="product-card">
+                        <div class="product-image-wrapper">
+                            <a href="{{ url_for('product_detail', product_id=p.id) }}">
+                                <img src="{{ url_for('static', filename='images/' ~ p.image) }}" alt="{{ p.name }}" loading="lazy">
+                            </a>
+
+                            <!-- Badges -->
+                            {% if p.badge %}
+                                <span class="card-badge {% if p.badge == 'Bestseller' %}badge-bestseller{% elif p.badge == 'Trending' %}badge-trending{% elif p.badge == 'Limited Edition' %}badge-limited{% else %}badge-sale{% endif %}">
+                                    {{ p.badge }}
+                                </span>
+                            {% endif %}
+
+                            <!-- Floating Action Buttons -->
+                            <div class="card-floating-actions">
+                                <button type="button" class="action-round-btn btn-wishlist-toggle" data-product-id="{{ p.id }}" onclick="toggleWishlist({{ p.id }}, this)" title="Save to Wishlist">
+                                    <i class="bi bi-heart"></i>
+                                </button>
+                                <button type="button" class="action-round-btn btn-quick-view" data-product-id="{{ p.id }}" title="Quick View">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+
+                            <!-- Quick Add to Bag Slide-Up Bar -->
+                            <button type="button" class="card-quick-add" onclick="addToCart({{ p.id }}, 1, '{{ p.sizes[0] }}', '{{ p.colors[0].name }}')">
+                                <i class="bi bi-bag-plus me-1"></i> Quick Add To Bag
+                            </button>
+                        </div>
+
+                        <div class="product-content">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="product-category-text">{{ p.category }}</span>
+                                <div class="star-rating">
+                                    <i class="bi bi-star-fill"></i>
+                                    <span class="text-dark fw-bold small ms-1">{{ p.rating }}</span>
+                                </div>
+                            </div>
+                            <h3 class="product-title">
+                                <a href="{{ url_for('product_detail', product_id=p.id) }}">{{ p.name }}</a>
+                            </h3>
+                            <div class="product-price-row">
+                                <span class="price-current price-val" data-base-price="{{ p.price }}">${{ "%.2f"|format(p.price) }}</span>
+                                {% if p.on_sale %}
+                                    <span class="price-original price-val" data-base-price="{{ p.original_price }}">${{ "%.2f"|format(p.original_price) }}</span>
+                                    <span class="discount-pill">-{{ p.discount_percent }}%</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Editorial Botanical Spotlight Banner -->
+<section class="py-5" style="background: linear-gradient(135deg, #FAF4EB 0%, #EFE5D5 100%);">
+    <div class="container py-4">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6 order-lg-2">
+                <div class="position-relative rounded-4 overflow-hidden shadow-lg border border-white border-4">
+                    <img src="{{ url_for('static', filename='images/pexels-ron-lach-8386648.jpg') }}" alt="Botanical Spring Collection" class="img-fluid w-100" style="max-height: 500px; object-fit:cover;">
+                    <div class="position-absolute top-0 end-0 m-3 badge bg-white text-dark shadow-sm px-3 py-2 rounded-pill fw-bold">
+                        <i class="bi bi-fire text-danger me-1"></i> High Demand
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 order-lg-1">
+                <span class="hero-tagline">
+                    <i class="bi bi-flower1 me-1"></i> Atelier Studio Spotlight
+                </span>
+                <h2 class="editorial-heading fw-bold fs-1 mb-3">
+                    The Botanical Harmony Capsule
+                </h2>
+                <p class="text-muted mb-4 fs-6">
+                    Fresh periwinkle tones, airy lilac cotton knits, and delicate English broderie anglaise tiered sun dresses. Each garment is treated with botanical plant-based dyes for subtle, living color.
+                </p>
+                <div class="row g-3 mb-4">
+                    <div class="col-6">
+                        <div class="p-3 bg-white rounded-3 shadow-sm border border-light">
+                            <i class="bi bi-droplet-half fs-4 text-warning mb-2 d-block"></i>
+                            <h6 class="fw-bold mb-1">Eco Pigments</h6>
+                            <p class="small text-muted mb-0">Naturally dyed using marigold and elderberry extracts.</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 bg-white rounded-3 shadow-sm border border-light">
+                            <i class="bi bi-hand-thumbs-up fs-4 text-success mb-2 d-block"></i>
+                            <h6 class="fw-bold mb-1">Small Batch</h6>
+                            <p class="small text-muted mb-0">Under 100 pieces per hue to prevent overproduction.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex gap-3">
+                    <a href="{{ url_for('product_detail', product_id=7) }}" class="btn btn-luxury-primary">
+                        Shop This Look <i class="bi bi-bag ms-1"></i>
+                    </a>
+                    <a href="{{ url_for('shop') }}" class="btn btn-luxury-outline">
+                        View Lookbook
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Additional Trending Grid -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="product-category-text">Hand-Selected Pieces</span>
+            <h2 class="editorial-heading fw-bold fs-2 mt-1">Complete Your Wardrobe</h2>
+            <p class="text-muted small">Versatile capsule staples curated for effortless layering</p>
+        </div>
+
+        <div class="row g-4">
+            {% for p in products[4:] %}
+                <div class="col-6 col-md-4">
+                    <div class="product-card">
+                        <div class="product-image-wrapper">
+                            <a href="{{ url_for('product_detail', product_id=p.id) }}">
+                                <img src="{{ url_for('static', filename='images/' ~ p.image) }}" alt="{{ p.name }}" loading="lazy">
+                            </a>
+
+                            {% if p.badge %}
+                                <span class="card-badge {% if p.badge == 'Bestseller' %}badge-bestseller{% elif p.badge == 'Trending' %}badge-trending{% elif p.badge == 'Limited Edition' %}badge-limited{% else %}badge-sale{% endif %}">
+                                    {{ p.badge }}
+                                </span>
+                            {% endif %}
+
+                            <div class="card-floating-actions">
+                                <button type="button" class="action-round-btn btn-wishlist-toggle" data-product-id="{{ p.id }}" onclick="toggleWishlist({{ p.id }}, this)" title="Save to Wishlist">
+                                    <i class="bi bi-heart"></i>
+                                </button>
+                                <button type="button" class="action-round-btn btn-quick-view" data-product-id="{{ p.id }}" title="Quick View">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+
+                            <button type="button" class="card-quick-add" onclick="addToCart({{ p.id }}, 1, '{{ p.sizes[0] }}', '{{ p.colors[0].name }}')">
+                                <i class="bi bi-bag-plus me-1"></i> Quick Add To Bag
+                            </button>
+                        </div>
+
+                        <div class="product-content">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="product-category-text">{{ p.category }}</span>
+                                <div class="star-rating">
+                                    <i class="bi bi-star-fill"></i>
+                                    <span class="text-dark fw-bold small ms-1">{{ p.rating }}</span>
+                                </div>
+                            </div>
+                            <h3 class="product-title">
+                                <a href="{{ url_for('product_detail', product_id=p.id) }}">{{ p.name }}</a>
+                            </h3>
+                            <div class="product-price-row">
+                                <span class="price-current price-val" data-base-price="{{ p.price }}">${{ "%.2f"|format(p.price) }}</span>
+                                {% if p.on_sale %}
+                                    <span class="price-original price-val" data-base-price="{{ p.original_price }}">${{ "%.2f"|format(p.original_price) }}</span>
+                                    <span class="discount-pill">-{{ p.discount_percent }}%</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Client Testimonials & Press Carousel -->
+<section class="py-5 bg-white border-top">
+    <div class="container py-3">
+        <div class="text-center mb-4">
+            <span class="product-category-text">What Our Clients Say</span>
+            <h2 class="editorial-heading fw-bold fs-2 mt-1">Acclaimed Across The Globe</h2>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="p-4 rounded-4 bg-light h-100 d-flex flex-column justify-content-between border border-light">
+                    <div>
+                        <div class="star-rating mb-2">
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                        </div>
+                        <p class="fst-italic text-dark mb-3">
+                            "The Flora Wrap Dress is an absolute triumph. The fabric feels like silk against the skin, yet it’s resilient, machine-friendly, and has zero synthetic shine."
+                        </p>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center fw-bold" style="width:40px; height:40px;">
+                            ER
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold">Elena Rostova</h6>
+                            <span class="small text-muted">Geneva, Switzerland • Verified Client</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="p-4 rounded-4 bg-light h-100 d-flex flex-column justify-content-between border border-light">
+                    <div>
+                        <div class="star-rating mb-2">
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                        </div>
+                        <p class="fst-italic text-dark mb-3">
+                            "Ordered on a Tuesday and it arrived in Paris by Thursday in luxury compostable packaging. The Rosewater knit set is now my weekend uniform."
+                        </p>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center fw-bold" style="width:40px; height:40px;">
+                            CD
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold">Camille Dupont</h6>
+                            <span class="small text-muted">Paris, France • Verified Client</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="p-4 rounded-4 bg-light h-100 d-flex flex-column justify-content-between border border-light">
+                    <div>
+                        <div class="star-rating mb-2">
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                        </div>
+                        <p class="fst-italic text-dark mb-3">
+                            "I have worked in fashion for twenty years and rarely see this level of stitching and seam finishing at this direct-to-consumer price point. Exceptional."
+                        </p>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center fw-bold" style="width:40px; height:40px;">
+                            VG
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold">Valerie Gomez</h6>
+                            <span class="small text-muted">New York, USA • Fashion Director</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

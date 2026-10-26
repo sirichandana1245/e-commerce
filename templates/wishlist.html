@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}My Wishlist | AURA ATELIER{% endblock %}
+
+{% block content %}
+
+<div class="py-4 bg-light border-bottom">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1 small">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-muted text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item active text-dark fw-bold" aria-current="page">Wishlist</li>
+            </ol>
+        </nav>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="font-serif fw-bold fs-2 mb-0">Your Private Wishlist</h1>
+                <p class="text-muted small mb-0">Saved designs and coveted seasonal silhouettes</p>
+            </div>
+            <a href="{{ url_for('shop') }}" class="btn btn-sm btn-luxury-outline">
+                Continue Exploring
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row g-4" id="wishlistItemsContainer">
+        <!-- Injected dynamically via main.js from localStorage -->
+        <div class="col-12 text-center py-5">
+            <div class="spinner-border text-dark" role="status">
+                <span class="visually-hidden">Loading wishlist...</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts_extra %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    renderWishlistPage();
+});
+</script>
+{% endblock %}

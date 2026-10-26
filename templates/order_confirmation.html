@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}Order Confirmed | AURA ATELIER{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+    <div class="max-w-xl mx-auto" style="max-width: 850px;">
+        <!-- Success Banner -->
+        <div class="card border-0 rounded-4 shadow-sm p-4 p-md-5 bg-white text-center mb-4">
+            <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mx-auto mb-3" style="width:70px; height:70px; font-size:2rem;">
+                <i class="bi bi-check-lg"></i>
+            </div>
+            <span class="product-category-text">Payment Authorized & Confirmed</span>
+            <h1 class="font-serif fw-bold fs-2 mt-1 mb-2">Thank you, {{ order.customer.name }}</h1>
+            <p class="text-muted mb-3">
+                Your order <strong class="text-dark">{{ order.order_id }}</strong> has been placed into our atelier production queue. A confirmation dispatch note has been sent to <strong>{{ order.customer.email }}</strong>.
+            </p>
+
+            <div class="d-inline-flex align-items-center gap-2 bg-light px-3 py-2 rounded-pill small mx-auto">
+                <i class="bi bi-calendar-event text-gold"></i>
+                <span>Estimated Arrival: <strong class="text-dark">{{ order.estimated_delivery }}</strong></span>
+            </div>
+        </div>
+
+        <!-- Order Milestone Tracker -->
+        <div class="card border-0 rounded-4 shadow-sm p-4 bg-white mb-4">
+            <h5 class="font-serif fw-bold mb-4 text-center">Fulfillment Journey</h5>
+            <div class="timeline-stepper">
+                <div class="timeline-step completed">
+                    <div class="step-circle"><i class="bi bi-check"></i></div>
+                    <span class="small fw-bold text-dark">Order Placed</span>
+                    <span class="text-muted" style="font-size:0.7rem;">Completed</span>
+                </div>
+                <div class="timeline-step active">
+                    <div class="step-circle"><i class="bi bi-box-seam"></i></div>
+                    <span class="small fw-bold text-dark">Quality Check</span>
+                    <span class="text-gold fw-bold" style="font-size:0.7rem;">In Progress</span>
+                </div>
+                <div class="timeline-step">
+                    <div class="step-circle"><i class="bi bi-truck"></i></div>
+                    <span class="small fw-bold text-muted">Dispatched</span>
+                    <span class="text-muted" style="font-size:0.7rem;">Express Air</span>
+                </div>
+                <div class="timeline-step">
+                    <div class="step-circle"><i class="bi bi-house-door"></i></div>
+                    <span class="small fw-bold text-muted">Delivered</span>
+                    <span class="text-muted" style="font-size:0.7rem;">Destination</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary & Shipping Details -->
+        <div class="card border-0 rounded-4 shadow-sm p-4 bg-white mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                <h5 class="font-serif fw-bold mb-0">Order Details</h5>
+                <span class="text-muted small">Placed on {{ order.date }}</span>
+            </div>
+
+            <!-- Items -->
+            <div class="d-flex flex-column gap-3 mb-4">
+                {% for item in order['items'] %}
+                    <div class="d-flex align-items-center justify-content-between py-2 border-bottom border-light">
+                        <div class="d-flex align-items-center gap-3">
+                            <img src="{{ url_for('static', filename='images/' ~ item.image) }}" alt="{{ item.name }}" style="width:65px; height:80px; object-fit:cover; border-radius:8px;">
+                            <div>
+                                <h6 class="mb-1 fw-bold text-dark">{{ item.name }}</h6>
+                                <div class="small text-muted">
+                                    Size: <strong>{{ item.size }}</strong> | Color: <strong>{{ item.color }}</strong> | Qty: <strong>{{ item.quantity }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="fw-bold price-val" data-base-price="{{ item.price * item.quantity }}">
+                            ${{ "%.2f"|format(item.price * item.quantity) }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Financial Totals -->
+            <div class="row g-4 pt-2">
+                <div class="col-md-6">
+                    <h6 class="small fw-bold text-uppercase text-muted mb-2">Shipping Address</h6>
+                    <p class="small mb-1 text-dark fw-bold">{{ order.customer.name }}</p>
+                    <p class="small text-muted mb-3">{{ order.customer.address }}</p>
+
+                    <h6 class="small fw-bold text-uppercase text-muted mb-1">Payment Method</h6>
+                    <p class="small text-dark fw-semibold mb-0"><i class="bi bi-check2-circle text-success me-1"></i> {{ order.payment_method }}</p>
+                </div>
+
+                <div class="col-md-6 border-start-md">
+                    <div class="d-flex justify-content-between mb-1 small">
+                        <span class="text-muted">Subtotal</span>
+                        <span class="fw-semibold price-val" data-base-price="{{ order.totals.subtotal }}">${{ "%.2f"|format(order.totals.subtotal) }}</span>
+                    </div>
+                    {% if order.totals.discount_amount > 0 %}
+                    <div class="d-flex justify-content-between mb-1 small text-danger fw-semibold">
+                        <span>Discount ({{ order.totals.discount_label }})</span>
+                        <span>-${{ "%.2f"|format(order.totals.discount_amount) }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="d-flex justify-content-between mb-1 small">
+                        <span class="text-muted">Express Shipping</span>
+                        <span>{% if order.totals.shipping_cost == 0 %}<strong class="text-success">Complimentary</strong>{% else %}${{ "%.2f"|format(order.totals.shipping_cost) }}{% endif %}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2 small">
+                        <span class="text-muted">Taxes</span>
+                        <span class="price-val" data-base-price="{{ order.totals.estimated_tax }}">${{ "%.2f"|format(order.totals.estimated_tax) }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between fs-5 fw-bold border-top pt-2 text-dark">
+                        <span>Total Paid</span>
+                        <span class="price-val" data-base-price="{{ order.totals.grand_total }}">${{ "%.2f"|format(order.totals.grand_total) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Next Actions -->
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <button class="btn btn-outline-dark" onclick="window.print();">
+                <i class="bi bi-printer me-1"></i> Print Receipt / Invoice
+            </button>
+            <div class="d-flex gap-2">
+                <a href="{{ url_for('orders_view', order_id=order.order_id) }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-geo-alt me-1"></i> Track Order
+                </a>
+                <a href="{{ url_for('shop') }}" class="btn btn-luxury-primary">
+                    Continue Shopping <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

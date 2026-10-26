@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Client Concierge & Inquiries | AURA ATELIER{% endblock %}
+
+{% block content %}
+
+<div class="py-4 bg-light border-bottom">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1 small">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-muted text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item active text-dark fw-bold" aria-current="page">Concierge</li>
+            </ol>
+        </nav>
+        <h1 class="font-serif fw-bold fs-2 mb-0">Client Concierge & Atelier Styling</h1>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row g-5">
+        <!-- Contact Form -->
+        <div class="col-lg-7">
+            <div class="card border-0 rounded-4 shadow-sm p-4 p-md-5 bg-white">
+                <span class="product-category-text">We Cherish Hearing From You</span>
+                <h3 class="font-serif fw-bold mb-3">Send Us a Direct Message</h3>
+                <p class="text-muted small mb-4">
+                    Our atelier stylists and customer concierge are available Monday through Saturday. We typically respond within 12 to 24 hours.
+                </p>
+
+                <form action="{{ url_for('contact') }}" method="POST">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-uppercase">Your Name</label>
+                            <input type="text" name="name" class="form-control" placeholder="e.g. Elena Rostova" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-uppercase">Email Address</label>
+                            <input type="email" name="email" class="form-control" placeholder="elena@example.com" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-uppercase">Inquiry Topic</label>
+                            <select name="topic" class="form-select">
+                                <option value="styling">Private Styling & Sizing Consultation</option>
+                                <option value="order">Order Status or Dispatch Inquiry</option>
+                                <option value="returns">Exchange & 30-Day Return Request</option>
+                                <option value="wholesale">Boutique Wholesale & Press Inquiries</option>
+                                <option value="other">General Question</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-uppercase">Order ID (If Applicable)</label>
+                            <input type="text" name="orderId" class="form-control" placeholder="e.g. AUR-XXXXXXXX">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-uppercase">Your Message</label>
+                            <textarea name="message" class="form-control" rows="4" placeholder="How may our concierge assist your wardrobe today?" required></textarea>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-luxury-primary py-3 px-5">
+                                Send Inquiry <i class="bi bi-send ms-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Studio Details & FAQ -->
+        <div class="col-lg-5">
+            <!-- Studio Addresses -->
+            <div class="card border-0 rounded-4 shadow-sm p-4 bg-white mb-4">
+                <h5 class="font-serif fw-bold mb-3 pb-2 border-bottom">Flagship Salons</h5>
+                
+                <div class="mb-3">
+                    <h6 class="fw-bold text-dark mb-1"><i class="bi bi-geo-alt text-gold me-2"></i> Paris Atelier & Salon</h6>
+                    <p class="small text-muted mb-0">18 Rue de la Paix, 75002 Paris, France</p>
+                    <span class="small text-muted"><i class="bi bi-telephone me-1"></i> +33 1 42 68 55 00</span>
+                </div>
+
+                <div class="mb-3">
+                    <h6 class="fw-bold text-dark mb-1"><i class="bi bi-geo-alt text-gold me-2"></i> New York Showroom</h6>
+                    <p class="small text-muted mb-0">432 Broome Street, SoHo, NY 10013, USA</p>
+                    <span class="small text-muted"><i class="bi bi-telephone me-1"></i> +1 (212) 555-0199</span>
+                </div>
+
+                <div class="p-3 bg-light rounded-3 mt-3">
+                    <div class="small fw-bold text-dark"><i class="bi bi-clock me-1 text-gold"></i> Concierge Hours</div>
+                    <div class="small text-muted">Monday – Friday: 9:00 AM – 7:00 PM CET</div>
+                    <div class="small text-muted">Saturday: 10:00 AM – 5:00 PM CET</div>
+                </div>
+            </div>
+
+            <!-- Frequent Questions -->
+            <div class="card border-0 rounded-4 shadow-sm p-4 bg-white">
+                <h5 class="font-serif fw-bold mb-3 pb-2 border-bottom">Common Queries</h5>
+
+                <div class="accordion accordion-flush" id="faqAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq1">
+                            <button class="accordion-button collapsed small fw-bold px-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFaq1">
+                                How fast is international delivery?
+                            </button>
+                        </h2>
+                        <div id="collapseFaq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body px-0 small text-muted">
+                                We dispatch via DHL Express or FedEx Priority. Deliveries to Europe take 2-3 business days, North America 3-4 business days, and Asia/Oceania 4-5 business days.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq2">
+                            <button class="accordion-button collapsed small fw-bold px-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFaq2">
+                                What is your return or exchange policy?
+                            </button>
+                        </h2>
+                        <div id="collapseFaq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body px-0 small text-muted">
+                                We gladly accept returns and complimentary size exchanges within 30 days of receipt, provided pieces are unworn with original tags attached.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq3">
+                            <button class="accordion-button collapsed small fw-bold px-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFaq3">
+                                How should I wash European linen?
+                            </button>
+                        </h2>
+                        <div id="collapseFaq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body px-0 small text-muted">
+                                European flax linen softens with every wash! We recommend machine washing on a delicate cycle in cold or lukewarm water, and line drying in gentle shade.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

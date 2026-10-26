@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block title %}Your Shopping Bag | AURA ATELIER{% endblock %}
+
+{% block content %}
+
+<div class="py-4 bg-light border-bottom">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1 small">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-muted text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item active text-dark fw-bold" aria-current="page">Shopping Bag</li>
+            </ol>
+        </nav>
+        <h1 class="font-serif fw-bold fs-2 mb-0">Your Selected Creations</h1>
+    </div>
+</div>
+
+<div class="container py-5">
+    {% if cart %}
+        <div class="row g-5">
+            <!-- Cart Items Table -->
+            <div class="col-lg-8">
+                <!-- Free Shipping Progress -->
+                <div class="p-3 bg-white rounded-3 border mb-4 shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center mb-1 small">
+                        <span>
+                            {% if totals.free_shipping_eligible %}
+                                <i class="bi bi-stars text-warning me-1"></i> <strong class="text-success">Complimentary Express Shipping Unlocked!</strong>
+                            {% else %}
+                                Add <span class="fw-bold text-dark">${{ "%.2f"|format(totals.amount_to_free_shipping) }}</span> more to unlock <strong>FREE Express Shipping</strong>!
+                            {% endif %}
+                        </span>
+                        <span class="text-muted">${{ "%.0f"|format(totals.subtotal) }} / $150</span>
+                    </div>
+                    <div class="free-shipping-progress">
+                        <div class="free-shipping-bar" style="width: {{ [100, ((totals.subtotal / 150.0) * 100)|round|int]|min }}%;"></div>
+                    </div>
+                </div>
+
+                <div class="card border-0 rounded-4 shadow-sm overflow-hidden mb-4">
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead class="table-light small text-uppercase" style="letter-spacing: 0.05em;">
+                                <tr>
+                                    <th scope="col" class="ps-4 py-3">Creation</th>
+                                    <th scope="col" class="py-3">Price</th>
+                                    <th scope="col" class="py-3 text-center">Quantity</th>
+                                    <th scope="col" class="py-3 text-end">Subtotal</th>
+                                    <th scope="col" class="py-3 text-center pe-4">Remove</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in cart %}
+                                    <tr>
+                                        <td class="ps-4 py-3">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <a href="{{ url_for('product_detail', product_id=item.id) }}">
+                                                    <img src="{{ url_for('static', filename='images/' ~ item.image) }}" alt="{{ item.name }}" class="cart-item-thumb">
+                                                </a>
+                                                <div>
+                                                    <h6 class="mb-1 font-serif fw-bold">
+                                                        <a href="{{ url_for('product_detail', product_id=item.id) }}" class="text-dark">{{ item.name }}</a>
+                                                    </h6>
+                                                    <div class="small text-muted">
+                                                        Size: <strong class="text-dark">{{ item.size }}</strong> | Color: <strong class="text-dark">{{ item.color }}</strong>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="py-3">
+                                            <span class="price-val" data-base-price="{{ item.price }}">${{ "%.2f"|format(item.price) }}</span>
+                                        </td>
+                                        <td class="py-3 text-center">
+                                            <div class="quantity-stepper mx-auto">
+                                                <button class="quantity-btn" onclick="updateCartItem('{{ item.item_key }}', -1)">-</button>
+                                                <input type="text" class="quantity-input" value="{{ item.quantity }}" readonly>
+                                                <button class="quantity-btn" onclick="updateCartItem('{{ item.item_key }}', 1)">+</button>
+                                            </div>
+                                        </td>
+                                        <td class="py-3 text-end fw-bold">
+                                            <span class="price-val" data-base-price="{{ item.price * item.quantity }}">${{ "%.2f"|format(item.price * item.quantity) }}</span>
+                                        </td>
+                                        <td class="py-3 text-center pe-4">
+                                            <button class="btn btn-sm btn-link text-danger p-0" onclick="removeCartItem('{{ item.item_key }}')" title="Remove">
+                                                <i class="bi bi-trash3 fs-5"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <a href="{{ url_for('shop') }}" class="btn btn-luxury-outline">
+                        <i class="bi bi-arrow-left me-1"></i> Continue Shopping
+                    </a>
+                    <button class="btn btn-sm btn-outline-danger" onclick="clearFullCart()">
+                        <i class="bi bi-trash3 me-1"></i> Clear Entire Bag
+                    </button>
+                </div>
+            </div>
+
+            <!-- Order Summary Card -->
+            <div class="col-lg-4">
+                <div class="card border-0 rounded-4 shadow-sm p-4 bg-white sticky-top" style="top: 100px;">
+                    <h4 class="font-serif fw-bold mb-3 pb-2 border-bottom">Order Summary</h4>
+
+                    <!-- Coupon Input -->
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-uppercase">Promotion or Gift Card</label>
+                        <div class="input-group">
+                            <input type="text" id="cartCouponInput" class="form-control" placeholder="Code (e.g. WELCOME20)" value="{{ totals.applied_coupon or '' }}">
+                            <button class="btn btn-dark" type="button" onclick="applyCartPageCoupon()">Apply</button>
+                        </div>
+                        <div class="small text-muted mt-1" style="font-size:0.75rem;">
+                            Hint: Try <code class="text-gold fw-bold">WELCOME20</code> or <code class="text-gold fw-bold">AURA10</code>
+                        </div>
+                    </div>
+
+                    <!-- Breakdown -->
+                    <div class="d-flex justify-content-between mb-2 small">
+                        <span class="text-muted">Items Subtotal</span>
+                        <span class="fw-bold price-val" data-base-price="{{ totals.subtotal }}">${{ "%.2f"|format(totals.subtotal) }}</span>
+                    </div>
+
+                    {% if totals.discount_amount > 0 %}
+                    <div class="d-flex justify-content-between mb-2 small text-danger fw-semibold">
+                        <span>Discount ({{ totals.discount_label }})</span>
+                        <span>-${{ "%.2f"|format(totals.discount_amount) }}</span>
+                    </div>
+                    {% endif %}
+
+                    <div class="d-flex justify-content-between mb-2 small">
+                        <span class="text-muted">Estimated Shipping</span>
+                        <span>
+                            {% if totals.shipping_cost == 0 %}
+                                <strong class="text-success">FREE Express</strong>
+                            {% else %}
+                                <span class="price-val" data-base-price="{{ totals.shipping_cost }}">${{ "%.2f"|format(totals.shipping_cost) }}</span>
+                            {% endif %}
+                        </span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-3 small">
+                        <span class="text-muted">Estimated Sales Tax (8.5%)</span>
+                        <span class="price-val" data-base-price="{{ totals.estimated_tax }}">${{ "%.2f"|format(totals.estimated_tax) }}</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-4 fs-5 fw-bold border-top pt-3">
+                        <span>Estimated Total</span>
+                        <span class="price-val text-dark" data-base-price="{{ totals.grand_total }}">${{ "%.2f"|format(totals.grand_total) }}</span>
+                    </div>
+
+                    <a href="{{ url_for('checkout_page') }}" class="btn btn-luxury-primary w-100 py-3 mb-3">
+                        Proceed to Checkout <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+
+                    <!-- Security note -->
+                    <div class="text-center small text-muted">
+                        <i class="bi bi-shield-lock-fill text-success me-1"></i> Guaranteed Safe 256-Bit SSL Checkout
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <!-- Empty Cart State -->
+        <div class="text-center py-5 bg-white rounded-4 border p-5 shadow-sm max-w-lg mx-auto" style="max-width: 600px;">
+            <div class="trust-icon-box mx-auto mb-3" style="width:70px; height:70px; font-size:2rem;">
+                <i class="bi bi-bag"></i>
+            </div>
+            <h2 class="font-serif fw-bold mb-2">Your Shopping Bag is Empty</h2>
+            <p class="text-muted mb-4">You have not added any creations yet. Discover our latest linen designs and luxury knitwear.</p>
+            <a href="{{ url_for('shop') }}" class="btn btn-luxury-primary px-4 py-3">Explore Atelier Catalog</a>
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block scripts_extra %}
+<script>
+async function applyCartPageCoupon() {
+    const input = document.getElementById('cartCouponInput');
+    if (!input || !input.value.trim()) return;
+
+    try {
+        const response = await fetch('/api/coupon/apply', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ code: input.value.trim() })
+        });
+        const data = await response.json();
+        if (data.success) {
+            window.location.reload();
+        } else {
+            showLuxuryToast("Notice", data.message, "bi-exclamation-circle");
+        }
+    } catch(err) {
+        console.error(err);
+    }
+}
+
+async function clearFullCart() {
+    if (!confirm("Are you sure you want to empty your shopping bag?")) return;
+    try {
+        await fetch('/api/cart/clear', { method: 'POST' });
+        window.location.reload();
+    } catch(err) {
+        console.error(err);
+    }
+}
+</script>
+{% endblock %}
